@@ -1,0 +1,8 @@
+GeneratedFiles/
+x64/
+Resources/
+*.vcxproj
+*.rc
+*.qrc
+*.filters
+*.user
