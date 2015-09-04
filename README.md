@@ -1,7 +1,13 @@
 # Simple-QT-Graph
 Simple & fast GUI to construct a weighted graph and apply Kruskal & Prim Algorithms on it.
 
-#Screeshots
+###How it works:
+- Click to create a node, nodes are created with automatically increasing ids.
+- Double click a node and point the line to another node to create an edge
+- An opaque dialog would instantly appear to enter the edge weight
+- You can move nodes by clicking and dragging
+
+###Screeshots
 ![capture](https://cloud.githubusercontent.com/assets/5361308/9686369/fd0716be-5323-11e5-81c9-ccc1d994c6b0.PNG)
 
 ![capture2](https://cloud.githubusercontent.com/assets/5361308/9686373/020c0f8e-5324-11e5-9d9e-80d52ede55c0.PNG)
