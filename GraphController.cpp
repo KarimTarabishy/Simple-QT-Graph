@@ -64,6 +64,11 @@ void GraphController::primRequest()
 	}
 
 	auto result = GraphAlgorithms::getPrimMST(*graph);
+	if (result.empty())
+	{
+		viewer->showResult("No MST found.");
+		return;
+	}
 	int sum = 0;
 	std::vector<int> edgesIds;
 	for (auto& edge : result)

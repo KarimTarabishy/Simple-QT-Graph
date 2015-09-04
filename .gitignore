@@ -6,3 +6,4 @@ Resources/
 *.qrc
 *.filters
 *.user
+Makefile*

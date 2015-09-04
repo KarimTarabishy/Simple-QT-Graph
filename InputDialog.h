@@ -16,7 +16,7 @@ public:
 
 	void reject() override;
 
-	private slots:
+private slots:
 	void onReturn();
 
 signals:
@@ -25,5 +25,6 @@ signals:
 private:
 	QLineEdit* le;
 	QPushButton* push;
+	int weight;
 };
 #endif // INPUTDIALOG_H

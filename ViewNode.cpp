@@ -7,7 +7,7 @@ int ViewNode::_id = 0;
 std::unordered_map<int, ViewNode*> ViewNode::nodes;
 ViewNode::ViewNode(qreal x, qreal y, qreal radius, bool defaultIncrease, QGraphicsEllipseItem *parent)
 	: QGraphicsEllipseItem(x, y, radius, radius, parent), normal(pen()), large(pen()), radius(radius),
-	inPath(false), inPathPen(QBrush(QColor(0,0,255,255)), 3)
+	inPath(false), inPathPen(QBrush(QColor(0, 0, 255, 255)), 3), inPathPenRed(QBrush(QColor(255, 0, 0, 255)), 3)
 {
 	if (defaultIncrease)
 	{
@@ -40,18 +40,21 @@ void ViewNode::updateEdge()
 	}
 }
 
-void ViewNode::setInPath(bool yes)
+void ViewNode::setInPath(bool yes, bool red)
 {
-	inPath = yes;
+	
 	if (yes)
 	{
 		isIncreased = false;
-		setPen(inPathPen);
+		setPen(!red ? inPathPen:inPathPenRed);
+		inPath = yes;
 	}
 	else
 	{
+		inPath = yes;
 		setPen(normal);
 	}
+	
 }
 
 ViewNode* ViewNode::get(int id)
@@ -61,6 +64,13 @@ ViewNode* ViewNode::get(int id)
 		throw std::runtime_error(" ViewEdge::get(int id) -> Edge not found");
 
 	return node->second;
+}
+
+void ViewNode::setPen(const QPen& pen)
+{
+	if (isInPath())
+		return;
+	QGraphicsEllipseItem::setPen(pen);
 }
 
 void ViewNode::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -111,6 +121,7 @@ void ViewNode::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 		if (reset)
 		{
 			setPos(startDragPos);
+			updateEdge();
 		}
 	}
 	QGraphicsEllipseItem::mouseReleaseEvent(event);

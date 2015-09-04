@@ -25,6 +25,7 @@ InputDialog::InputDialog(QWidget* parent)
 	setFixedHeight(sizeHint().height());
 
 	connect(le, &QLineEdit::returnPressed, this, &InputDialog::onReturn);
+	setWindowOpacity(0.5);
 
 }
 
@@ -38,8 +39,9 @@ void InputDialog::reject()
 
 void InputDialog::onReturn()
 {
-
+	
 	int weight = le->text().toInt();
 	emit weightEntered(weight);
 	accept();
+	
 }

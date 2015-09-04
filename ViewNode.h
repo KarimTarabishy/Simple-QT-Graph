@@ -19,11 +19,14 @@ public:
 	void setText(QString text){ this->text = text; }
 	int getId() const{ return id; }
 	void updateEdge();
-	void setInPath(bool yes);
+	void setInPath(bool yes, bool red = false);
+	bool isInPath() { return inPath; }
 
 	static ViewNode* get(int id);
 	static std::unordered_map<int, ViewNode*> getNodes(){ return nodes; }
 	static void resetIds(){ _id = 0; nodes.clear(); }
+
+	void setPen(const QPen & pen);
 
 	
 protected:
@@ -37,7 +40,7 @@ protected:
 
 private:
 	QPointF startDragPos;
-	QPen normal, large, inPathPen;
+	QPen normal, large, inPathPen, inPathPenRed;
 	bool isIncreased, inPath;
 	QString text;
 	int id;

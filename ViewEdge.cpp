@@ -25,7 +25,7 @@ void ViewEdge::link(const QPointF& p1, const QPointF& p2, bool ignoreText)
 	{
 		if (!textItem)
 		{
-			textItem = new ViewText(std::to_string(1).c_str(), this);
+			textItem = new ViewText(std::to_string(weight).c_str(), this);
 			textItem->setTextInteractionFlags(Qt::TextEditable);
 		}
 		textItem->setTransform(QTransform(1, 0, 0, 1, 0,0));
@@ -102,6 +102,8 @@ void ViewEdge::relink()
 void ViewEdge::enforce(bool yes)
 {
 	setPen(yes ? selected : normal);
+	node1->setInPath(yes, true);
+	node2->setInPath(yes, true);
 }
 
 ViewEdge* ViewEdge::get(int id)

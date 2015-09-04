@@ -85,13 +85,14 @@ void GraphViewer::getQGVPoints(QPointF& start, QPointF& end)
 void GraphViewer::selectEdges(std::vector<int> edgeIds, std::vector<int> nodes)
 {
 	unselectEdges();
-	for (int id : edgeIds)
-	{
-		ViewEdge::get(id)->enforce(true);
-	}
+	
 	for (int id : nodes)
 	{
 		ViewNode::get(id)->setInPath(true);
+	}
+	for (int id : edgeIds)
+	{
+		ViewEdge::get(id)->enforce(true);
 	}
 	lastSelectedEdgeIds = edgeIds;
 	lastSelectedNodes = nodes;

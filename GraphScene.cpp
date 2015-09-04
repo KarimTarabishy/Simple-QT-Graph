@@ -26,6 +26,7 @@ GraphScene::GraphScene(QObject *parent)
 	isDragging = false;
 	lastConnected = nullptr;
 	draggedNode = nullptr;
+	isEnteringWeight = false;
 }
 
 GraphScene::~GraphScene()
@@ -61,10 +62,15 @@ void GraphScene::notifyNodeDrag(bool start, ViewNode* draggedNode)
 void GraphScene::entered()
 {
 	probe->setVisible(true);
+	auto gv = GraphViewer::get()->getQGView();
+	probe->setPos(gv->mapToScene(gv->mapFromGlobal(QCursor::pos())));
 }
 
 void GraphScene::left()
 {
+	if (isEnteringWeight)
+		return;
+
 	probe->setVisible(false);
 
 	//start resetting all states
@@ -112,7 +118,19 @@ void GraphScene::resetRequest()
 
 void GraphScene::weightEntered(int weight)
 {
-	recWeight = weight;
+	setFocus();
+	edge->link(edgeNode, tmpNode, false, weight);
+	
+	emit addGEdge(edge->getId(), edgeNode->getId(), tmpNode->getId(), edge->getWeight());
+
+	edge = nullptr;
+	if (!edgeNode->isInPath())
+		edgeNode->setPen(normalPen);
+	edgeNode = nullptr;
+	isDrawingEdge = false;
+	isEnteringWeight = false;
+
+	
 }
 
 void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
@@ -126,7 +144,8 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 		{
 			removeItem(edge);
 			edge = nullptr;
-			edgeNode->setPen(normalPen);
+			if (!edgeNode->isInPath())
+				edgeNode->setPen(normalPen);
 			edgeNode = nullptr;
 			isDrawingEdge = false;
 			if (!node)
@@ -136,19 +155,13 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 		}
 		else
 		{
-			GraphViewer::get()->showWeightDialog();
-			edge->link(edgeNode, node, false, recWeight);
+			isEnteringWeight = true;
+			tmpNode = node;
 			edge->setPen(normalPen);
-			emit addGEdge(edge->getId(), edgeNode->getId(), node->getId(), edge->getWeight());
+			if (!tmpNode->isInPath())
+				tmpNode->setPen(normalPen);
+			GraphViewer::get()->showWeightDialog();
 		}
-		edge = nullptr;
-		edgeNode->setPen(normalPen);
-		edgeNode = nullptr;
-		isDrawingEdge = false;
-		if (!node)
-			probe->setVisible(true);
-		if (node)
-			node->setIncreased(true,true);
 
 		return;
 	}
@@ -179,7 +192,6 @@ void GraphScene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 
 void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
-//	GraphViewer::get()->debug(mouseEvent->scenePos());
 	
 	QGraphicsView* view = GraphViewer::get()->getQGView();
 
@@ -200,6 +212,10 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
 		auto gv = GraphViewer::get()->getQGView();
 		QPointF ss = gv->mapToScene(gv->mapFromGlobal(np));
 		probe->setPos(ss);
+		if (isDragging)
+		{
+			QCursor::setPos(np);
+		}
 	}
 	if (isDrawingEdge)
 	{
@@ -223,7 +239,8 @@ void GraphScene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
 			if (lastConnected)
 				lastConnected->setPen(normalPen);
 			lastConnected = node;
-			lastConnected->setPen(edgePen);
+			if (!lastConnected->isInPath())
+				lastConnected->setPen(edgePen);
 			edge->link(edgeNode->pos(),node->pos(), true);
 			edge->setPen(edgePen);
 		}
@@ -271,7 +288,8 @@ void GraphScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* mouseEvent)
 		isDrawingEdge = true;
 		edgeNode = node;
 		edge = new ViewEdge(node->pos(), node->pos());
-		edgeNode->setPen(edgePen);
+		if (!edgeNode->isInPath())
+			edgeNode->setPen(edgePen);
 		addItem(edge);
 	}
 	

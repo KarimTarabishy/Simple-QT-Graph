@@ -40,9 +40,8 @@ private:
 	ViewNode* probe;
 	QPen safePen, errorPen, edgePen, normalPen;
 	bool inNode, isDragging;
-	bool isDrawingEdge;
+	bool isDrawingEdge, isEnteringWeight;
 	void notifyInvalidPlacementPosition();
-	int recWeight;
 
 	ViewNode* lastNode, *edgeNode, *lastConnected, *draggedNode, *tmpNode;
 	ViewEdge* edge;
